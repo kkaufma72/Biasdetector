@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biasbuster-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biasbuster
+  template:
+    metadata:
+      labels:
+        app: biasbuster
+    spec:
+      containers:
+        - name: biasbuster
+          image: your-docker-repo/biasbuster:latest
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-secret
+                  key: api-key
+          ports:
+            - containerPort: 8501

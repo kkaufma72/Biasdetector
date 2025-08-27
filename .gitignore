@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Data processing artifacts
+spark-warehouse/
+
+# Streamlit cache
+.streamlit/
+
+# Model artifacts
+models/
+*.pkl

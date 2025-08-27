@@ -2,3 +2,12 @@ streamlit
 openai
 langchain
 spacy
+nltk
+pyspark
+scikit-learn
+pandas
+numpy
+joblib
+boto3
+google-cloud-storage
+xgboost
