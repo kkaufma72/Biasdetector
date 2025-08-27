@@ -8,7 +8,7 @@ BiasBuster is a demonstration web app for recruiters to detect biased language i
 - Predict diversity impact with a logistic regression model trained on synthetic data.
 - Analytics showing neutrality scores before/after rewrites and percentage improvement.
 - PySpark helper for large batch processing.
-- Summary dashboard with KPI metrics and a resume-style narrative.
+
 - Dockerfile and Kubernetes manifests for scalable deployment.
 
 ## Running Locally

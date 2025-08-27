@@ -13,8 +13,9 @@ from llm_rewrite import rewrite_text
 from spark_processor import analyze_dataset
 from summary_page import render_summary
 
-st.set_page_config(page_title="BiasBuster", layout="wide")
 
+# ---- Page config & global styles ----
+st.set_page_config(page_title="BiasBuster", layout="wide")
 st.markdown(
     """
     <style>
@@ -55,7 +56,8 @@ def analyzer_page() -> None:
         st.subheader("Detected Biases")
         if biases:
             bias_df = pd.DataFrame(
-                [(k, len(v)) for k, v in biases.items()], columns=["category", "count"]
+                [(k, len(v)) for k, v in biases.items()],
+                columns=["category", "count"],
             )
             st.bar_chart(bias_df.set_index("category"))
         else:
@@ -69,15 +71,17 @@ def analyzer_page() -> None:
         with col1:
             st.metric("Neutrality Before", f"{score_before:.2%}")
             st.metric("Neutrality After", f"{score_after:.2%}")
-        if score_before:
-            improvement = (score_after - score_before) / score_before
-            col2.metric("Bias Reduction", f"{improvement*100:.1f}%")
+        with col2:
+            if score_before:
+                improvement = (score_after - score_before) / score_before
+                st.metric("Bias Reduction", f"{improvement*100:.1f}%")
+            else:
+                st.metric("Bias Reduction", "—")
 
-        decrease = predictor.predict_decrease(bias_count)
-        col2.metric(
-            "Predicted Diversity Impact", f"-{decrease:.1f}%"
-        )
+            decrease = predictor.predict_decrease(bias_count)
+            st.metric("Predicted Diversity Impact", f"-{decrease:.1f}%")
 
+    # ---- Sidebar: Bulk (Spark) Analysis ----
     st.sidebar.header("Bulk Analysis")
     bulk = st.sidebar.file_uploader(
         "Text file with one document per line", type=["txt"], key="bulk"
@@ -90,7 +94,11 @@ def analyzer_page() -> None:
                 tmp.write(bulk.read())
                 tmp_path = tmp.name
             df = analyze_dataset(tmp_path)
-            st.sidebar.write(df.toPandas())
+            # If this is a Spark DataFrame, convert to pandas for display
+            try:
+                st.sidebar.write(df.toPandas())
+            except AttributeError:
+                st.sidebar.write(df)
 
 
 def main() -> None:
@@ -103,3 +111,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
